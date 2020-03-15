@@ -242,6 +242,9 @@ class AvocadoAgent(CaptureAgent):
     self.agentState = 0
     self.start = gameState.getAgentPosition(self.index)
 
+    self.initialFood = len(self.getFood(gameState).asList())
+
+
   def chooseAction(self, gameState):
 
     actions = gameState.getLegalActions(self.index)
@@ -351,8 +354,25 @@ class AvocadoAgent(CaptureAgent):
     if action == Directions.STOP: features['stop'] = 1
     rev = Directions.REVERSE[gameState.getAgentState(self.index).configuration.direction]
     if action == rev: features['reverse'] = 1
-    
-    
+
+
+    # Compute risk, let the agent return when get enough food.
+    if not myState.isPacman:
+      self.initialFood = len(foodList)
+    eatenFood = self.initialFood - len(foodList)
+    mid = gameState.data.layout.width/2
+    features['risk'] = eatenFood * abs(myPos[0]-mid)
+
+
+    # Compute distance to Capsules
+    Capsules = self.getCapsules(gameState)
+    if len(Capsules) > 0:
+      features['distanceToCapsules'] = min([self.getMazeDistance(myPos, capsule) for capsule in Capsules])
+    else:
+      features['distanceToCapsules'] = 0
+
+    # Compute distance to partner
+
     return features
 
 
@@ -361,7 +381,7 @@ class AvocadoAgent(CaptureAgent):
     successor = self.getSuccessor(gameState, action)
     myState = successor.getAgentState(self.index)
     if myState.isPacman:
-      return {'successorScore': 100, 'distanceToFood': -1,'nearestGhostCost': -30, 'numInvaders': 0, 'onDefense': 0, 'invaderDistance': 0, 'stop': 0, 'reverse': 0}
+      return {'successorScore': 100, 'distanceToFood': -1, 'distanceToCapsules': -3, 'nearestGhostCost': -30, 'numInvaders': 0, 'onDefense': 0, 'invaderDistance': 0, 'stop': -10, 'reverse': 0, 'risk': -10}
     else:
       team = self.getTeam(gameState)
       for partnerIndex in team:
@@ -369,7 +389,7 @@ class AvocadoAgent(CaptureAgent):
           partnerState = gameState.getAgentState(partnerIndex)
           break
       if partnerState.isPacman:
-        return {'successorScore': 0, 'distanceToFood': 0,'nearestGhostCost': 0, 'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -20}
+        return {'successorScore': 0, 'distanceToFood': 0, 'distanceToCapsules': 0 ,'nearestGhostCost': 0, 'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -20, 'risk': 0}
       else:
-        return {'successorScore': 100, 'distanceToFood': -1,'nearestGhostCost': -30, 'numInvaders': -500, 'onDefense': 0, 'invaderDistance': -10, 'stop': 0, 'reverse': 0}
+        return {'successorScore': 100, 'distanceToFood': -1, 'distanceToCapsules': 0, 'nearestGhostCost': -30, 'numInvaders': -500, 'onDefense': 0, 'invaderDistance': -10, 'stop': 0, 'reverse': 0, 'risk': 0}
         
