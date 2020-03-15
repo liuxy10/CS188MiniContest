@@ -359,11 +359,9 @@ class AvocadoAgent(CaptureAgent):
 
   def getWeights(self, gameState, action):
     successor = self.getSuccessor(gameState, action)
-    foodList = self.getFood(successor).asList()    
     myState = successor.getAgentState(self.index)
-    myPos = myState.getPosition()
     if myState.isPacman:
-      return {'successorScore': 100, 'distanceToFood': -1,'nearestGhostCost': -60, 'numInvaders': 0, 'onDefense': 0, 'invaderDistance': 0, 'stop': -30, 'reverse': 0}
+      return {'successorScore': 100, 'distanceToFood': -1,'nearestGhostCost': -30, 'numInvaders': 0, 'onDefense': 0, 'invaderDistance': 0, 'stop': 0, 'reverse': 0}
     else:
       team = self.getTeam(gameState)
       for partnerIndex in team:
@@ -373,9 +371,5 @@ class AvocadoAgent(CaptureAgent):
       if partnerState.isPacman:
         return {'successorScore': 0, 'distanceToFood': 0,'nearestGhostCost': 0, 'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -20}
       else:
-        myDistanceToFood = min([self.getMazeDistance(myPos, food) for food in foodList])
-        PartnerDistanceToFood = min([self.getMazeDistance(gameState.getAgentPosition(partnerIndex), food) for food in foodList])
-        if myDistanceToFood > PartnerDistanceToFood:
-          return {'successorScore': 0, 'distanceToFood': 0,'nearestGhostCost': 0, 'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -20}
-        else:
-          return {'successorScore': 100, 'distanceToFood': 0,'nearestGhostCost': -60, 'numInvaders': 0, 'onDefense': -50, 'invaderDistance': 0, 'stop': -100, 'reverse': -20}
+        return {'successorScore': 100, 'distanceToFood': -1,'nearestGhostCost': -30, 'numInvaders': -500, 'onDefense': 0, 'invaderDistance': -10, 'stop': 0, 'reverse': 0}
+        
