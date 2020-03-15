@@ -244,6 +244,8 @@ class AvocadoAgent(CaptureAgent):
 
     self.initialFood = len(self.getFood(gameState).asList())
 
+    self.corner = {}
+
     
 
 
@@ -394,14 +396,18 @@ class AvocadoAgent(CaptureAgent):
     #  features['wonder'] = 0
 
     # Do not go into walls !!!
-
-    nextPoints = [(myPos[0], myPos[1]-1), (myPos[0], myPos[1]+1), (myPos[0]-1, myPos[1]), (myPos[0]+1, myPos[1])]
-    count = 0
-    for p in nextPoints:
-      if gameState.hasWall(int(p[0]), int(p[1])):
-        count += 1
-    if (count == 3) and (minDistGhost < 3):
-      features['wall'] = -1000
+    if minDistGhost < 3:
+      nextPoints = [(myPos[0], myPos[1]-1), (myPos[0], myPos[1]+1), (myPos[0]-1, myPos[1]), (myPos[0]+1, myPos[1])]
+      if p not in self.corner:
+        count = 0
+        for p in nextPoints:
+          if gameState.hasWall(int(p[0]), int(p[1])):
+            count += 1
+        self.corner[myPos] = count
+      if self.corner[myPos] == 3:
+        features['wall'] = -1000
+      else:
+        features['wall'] = 0
     else:
       features['wall'] = 0
 
