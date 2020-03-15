@@ -243,6 +243,7 @@ class AvocadoAgent(CaptureAgent):
     self.start = gameState.getAgentPosition(self.index)
 
     self.initialFood = len(self.getFood(gameState).asList())
+    
 
 
   def chooseAction(self, gameState):
@@ -360,7 +361,10 @@ class AvocadoAgent(CaptureAgent):
     if not myState.isPacman:
       self.initialFood = len(foodList)
     eatenFood = self.initialFood - len(foodList)
-    mid = gameState.data.layout.width/2
+    if self.red:
+      mid = gameState.data.layout.width/2-1
+    else:
+      mid = gameState.data.layout.width/2+1
     midLine = [(mid, y) for y in range(gameState.data.layout.height)]
     diss = []
     for p in midLine:
@@ -387,7 +391,7 @@ class AvocadoAgent(CaptureAgent):
     successor = self.getSuccessor(gameState, action)
     myState = successor.getAgentState(self.index)
     if myState.isPacman:
-      return {'successorScore': 100, 'distanceToFood': -1, 'distanceToCapsules': -2, 'nearestGhostCost': -30, 'numInvaders': 0, 'onDefense': 0, 'invaderDistance': 0, 'stop': -10, 'reverse': 0, 'risk': -5}
+      return {'successorScore': 100, 'distanceToFood': -1, 'distanceToCapsules': -3, 'nearestGhostCost': -30, 'numInvaders': 0, 'onDefense': 0, 'invaderDistance': 0, 'stop': -10, 'reverse': 0, 'risk': -5}
     else:
       team = self.getTeam(gameState)
       for partnerIndex in team:
@@ -397,5 +401,5 @@ class AvocadoAgent(CaptureAgent):
       if partnerState.isPacman:
         return {'successorScore': 0, 'distanceToFood': 0, 'distanceToCapsules': 0 ,'nearestGhostCost': 0, 'numInvaders': -1000, 'onDefense': 100, 'invaderDistance': -10, 'stop': -100, 'reverse': -20, 'risk': 0}
       else:
-        return {'successorScore': 100, 'distanceToFood': -1, 'distanceToCapsules': -2, 'nearestGhostCost': -30, 'numInvaders': -500, 'onDefense': 0, 'invaderDistance': -10, 'stop': 0, 'reverse': 0, 'risk': 0}
+        return {'successorScore': 100, 'distanceToFood': -1, 'distanceToCapsules': -3, 'nearestGhostCost': -30, 'numInvaders': -500, 'onDefense': 0, 'invaderDistance': -10, 'stop': 0, 'reverse': 0, 'risk': 0}
         
